@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SteppeTruth · NASA Space Apps 2026</title>
+<meta name="description" content="SteppeTruth: датчик почвы и данные NASA помогают фермеру Западного Казахстана выбрать севооборот на три года.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #2a2118; --light: #efefef; --paper: #f2f0ec; --ink: #2a2118;
+    --mute-d: #b3a898; --mute-l: #6b6257; --rule-d: #6a5f52; --rule-l: #b8ada0;
+    --acc: #d98a4e; --dry: #d98a4e; --mid: #b9a27c; --wet: #3f6e8c; --sand: #9a7f52;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', Arial, sans-serif; background: var(--light); color: var(--ink); line-height: 1.5; }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 88px 0; }
+  .dark { background: var(--dark); color: var(--paper); }
+  .dark .mute { color: var(--mute-d); }
+  .mute { color: var(--mute-l); }
+  .brand { font-size: 15px; font-weight: 500; letter-spacing: .2px; }
+  h1 { font-size: clamp(56px, 11vw, 132px); font-weight: 800; letter-spacing: -0.045em; line-height: .95; }
+  h2 { font-size: clamp(36px, 6vw, 64px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.02; margin-bottom: 14px; }
+  h3 { font-size: 20px; font-weight: 700; letter-spacing: .2px; }
+  .cap { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; line-height: 1.4; }
+  .lab { font-size: 14px; text-transform: uppercase; letter-spacing: .6px; line-height: 1.45; }
+  .lead { font-size: 19px; max-width: 680px; }
+  .sub { font-size: 14px; letter-spacing: .4px; text-transform: uppercase; }
+
+  nav { position: sticky; top: 0; z-index: 10; background: var(--dark); color: var(--paper); border-bottom: 1px solid var(--rule-d); }
+  nav .wrap { display: flex; gap: 20px; align-items: center; height: 56px; overflow-x: auto; white-space: nowrap; }
+  nav a { text-decoration: none; font-size: 14px; color: var(--mute-d); }
+  nav a:hover { color: var(--paper); }
+  nav .brand { color: var(--paper); margin-right: auto; }
+  .langs { display: flex; border: 1px solid var(--rule-d); }
+  .langs button { font: inherit; font-size: 13px; font-weight: 700; padding: 5px 10px; background: transparent; color: var(--mute-d); border: 0; cursor: pointer; }
+  .langs button.on { background: var(--paper); color: var(--dark); }
+
+  .hero { padding: 120px 0 96px; }
+  .hero .row { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: end; }
+  .hero p.tag { font-size: clamp(20px, 2.6vw, 28px); font-weight: 500; margin-top: 28px; max-width: 620px; }
+  .facts { border-top: 1px solid var(--rule-d); }
+  .facts div { display: grid; grid-template-columns: 130px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule-d); }
+
+  .nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 48px; }
+  .num { border-top: 2px solid var(--rule-l); padding-top: 18px; }
+  .dark .num { border-color: var(--rule-d); }
+  .num b { display: block; font-size: clamp(44px, 6vw, 76px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; margin-bottom: 10px; }
+  .nums.sm b { font-size: clamp(32px, 4vw, 46px); white-space: nowrap; }
+  .src { margin-top: 28px; font-size: 13px; }
+
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 44px; }
+  .card { border-top: 2px solid var(--rule-l); padding-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .dark .card { border-color: var(--rule-d); }
+
+  .panel { background: var(--paper); border: 1px solid var(--rule-l); padding: 24px; margin-top: 32px; }
+  .dark .panel { background: #342a20; border-color: var(--rule-d); }
+  .status { font-size: 14px; margin-bottom: 12px; }
+  .status.err { color: #e07a5f; }
+  .light .status.err, section:not(.dark) .status.err { color: #b4452f; }
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 14px; font-size: 13px; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px; background: var(--c); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 22px; }
+  .stats div { border-top: 1px solid var(--rule-d); padding-top: 10px; }
+  .stats b { display: block; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+  svg text { font-family: 'Inter', Arial, sans-serif; }
+  .bar { cursor: pointer; }
+  .bar:hover { opacity: .75; }
+
+  .seg { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .seg button { font: inherit; font-size: 14px; font-weight: 600; padding: 9px 14px; border: 1px solid var(--rule-d); background: transparent; color: var(--paper); cursor: pointer; }
+  .seg button.on { background: var(--paper); color: var(--dark); border-color: var(--paper); }
+  section:not(.dark) .seg button { color: var(--ink); border-color: var(--rule-l); }
+  section:not(.dark) .seg button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  input[type=range] { width: 100%; margin-top: 14px; accent-color: var(--acc); }
+  select { font: inherit; font-size: 15px; padding: 9px 10px; width: 100%; background: var(--paper); color: var(--ink); border: 1px solid var(--rule-l); }
+
+  /* soil */
+  .soilgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 40px; }
+  .big { font-size: clamp(44px, 6vw, 72px); font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+  .verdict { display: inline-block; margin-top: 12px; padding: 4px 10px; font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; background: var(--ink); color: var(--paper); }
+  .verdict.dry { background: var(--dry); color: var(--ink); }
+  .verdict.wet { background: var(--wet); color: var(--paper); }
+  .cmp { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 15px; }
+  .cmp th, .cmp td { text-align: left; padding: 12px 10px 12px 0; border-top: 1px solid var(--rule-l); vertical-align: top; }
+  .cmp th { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--mute-l); font-weight: 700; }
+  .cmp td:first-child { color: var(--mute-l); width: 26%; }
+  .cmp tr:last-child td { border-bottom: 1px solid var(--rule-l); }
+
+  .levels .lv { display: grid; grid-template-columns: 170px 1fr 48px; gap: 12px; align-items: center; padding: 7px 0; border-top: 1px solid var(--rule-l); font-size: 14px; }
+  .levels .lv i { display: block; height: 14px; min-width: 3px; }
+  .levels .lv b { text-align: right; }
+
+  /* advisor */
+  .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 36px; }
+  .ctl { border-top: 2px solid var(--rule-d); padding-top: 14px; }
+  .build { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .rot { border-top: 1px solid var(--rule-d); padding: 22px 0; display: grid; grid-template-columns: 56px 1fr 230px; gap: 20px; align-items: start; }
+  .rot.mine { background: #342a20; padding: 22px 16px; margin: 0 -16px; }
+  .rotlist .rot:last-child { border-bottom: 1px solid var(--rule-d); }
+  .rank { font-size: 40px; font-weight: 800; line-height: 1; color: var(--acc); }
+  .chain { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .why { font-size: 15px; }
+  .why li { margin-left: 18px; }
+  .meter { height: 10px; background: #4a3d2f; margin-top: 8px; }
+  .meter i { display: block; height: 100%; background: var(--acc); }
+  .pill { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; border: 1px solid var(--rule-d); padding: 2px 8px; margin-left: 8px; vertical-align: 3px; color: var(--mute-d); }
+  .note { margin-top: 22px; font-size: 14px; border-left: 3px solid var(--acc); padding-left: 14px; max-width: 820px; }
+
+  /* crops table */
+  .crops { width: 100%; border-collapse: collapse; margin-top: 36px; font-size: 15px; }
+  .crops th, .crops td { text-align: left; padding: 12px 12px 12px 0; border-top: 1px solid var(--rule-l); vertical-align: top; }
+  .crops th { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--mute-l); }
+  .crops td b { font-weight: 700; }
+  .dots { letter-spacing: 3px; color: var(--acc); white-space: nowrap; }
+  .dots s { text-decoration: none; color: var(--rule-l); }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 40px; }
+  .list div { border-top: 1px solid var(--rule-l); padding: 14px 0; }
+  .dark .list div { border-color: var(--rule-d); }
+  .list div:last-child { border-bottom: 1px solid var(--rule-l); }
+  .dark .list div:last-child { border-color: var(--rule-d); }
+  footer { padding: 48px 0; font-size: 14px; }
+  .scroll { overflow-x: auto; }
+
+  @media (max-width: 820px) {
+    section { padding: 64px 0; }
+    .hero .row, .two, .controls, .soilgrid { grid-template-columns: 1fr; }
+    .nums, .cards { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .rot { grid-template-columns: 40px 1fr; }
+    .rot .score { grid-column: 2; }
+    .levels .lv { grid-template-columns: 130px 1fr 44px; }
+    .crops { font-size: 14px; min-width: 640px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="brand">✱ SteppeTruth</span>
+    <a href="#problem" data-i="navProblem"></a>
+    <a href="#nasa" data-i="navNasa"></a>
+    <a href="#soil" data-i="navSoil"></a>
+    <a href="#sensor" data-i="navSensor"></a>
+    <a href="#advisor" data-i="navAdvisor"></a>
+    <a href="#crops" data-i="navCrops"></a>
+    <a href="#trust" data-i="navTrust"></a>
+    <div class="langs"><button data-lang="ru">RU</button><button data-lang="en">EN</button></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero dark">
+  <div class="wrap">
+    <p class="brand mute" data-i="heroKicker"></p>
+    <div class="row" style="margin-top:56px">
+      <div>
+        <h1>SteppeTruth.</h1>
+        <p class="tag" data-i="heroTag"></p>
+      </div>
+      <div class="facts lab">
+        <div><span class="mute" data-i="factTask"></span><b>Field Shift: Adapting Farms with NASA Data</b></div>
+        <div><span class="mute" data-i="factRegion"></span><b data-i="factRegionV"></b></div>
+        <div><span class="mute" data-i="factData"></span><b data-i="factDataV"></b></div>
+        <div><span class="mute" data-i="factTeam"></span><b>SteppeTruth</b></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <h2 data-i="probTitle"></h2>
+    <div class="nums">
+      <div class="num"><b>190–320</b><span class="cap" data-i="prob1"></span></div>
+      <div class="num"><b data-i="prob2v"></b><span class="cap" data-i="prob2"></span></div>
+      <div class="num"><b data-i="prob3v"></b><span class="cap" data-i="prob3"></span></div>
+    </div>
+    <p class="lead" style="margin-top:40px" data-i="probLead"></p>
+    <p class="src mute" data-i="probSrc"></p>
+  </div>
+</section>
+
+<!-- NASA: yearly -->
+<section id="nasa" class="dark">
+  <div class="wrap">
+    <h2 data-i="nasaTitle"></h2>
+    <p class="lead" style="margin-top:18px" data-i="nasaLead"></p>
+    <div class="panel">
+      <div class="seg" id="metricSeg" style="margin:0 0 16px">
+        <button data-v="rain" class="on" data-i="metricRain"></button>
+        <button data-v="soil" data-i="metricSoil"></button>
+      </div>
+      <p class="status mute" id="nasaStatus"></p>
+      <div id="nasaChart"></div>
+      <div class="legend mute">
+        <span style="--c:var(--dry)" data-i="legDry"></span>
+        <span style="--c:var(--mid)" data-i="legMed"></span>
+        <span style="--c:var(--wet)" data-i="legWet"></span>
+      </div>
+      <div class="stats" id="nasaStats"></div>
+    </div>
+    <p class="src mute" data-i="nasaSrc"></p>
+  </div>
+</section>
+
+<!-- SOIL ANALYSIS + COMPARISON -->
+<section id="soil">
+  <div class="wrap">
+    <h2 data-i="soilTitle"></h2>
+    <p class="lead" style="margin-top:18px" data-i="soilLead"></p>
+
+    <div class="soilgrid">
+      <div class="panel" style="margin-top:0">
+        <p class="cap" data-i="soilNasaHead"></p>
+        <p class="status mute" id="soilStatus" style="margin-top:8px"></p>
+        <div id="soilNow"></div>
+      </div>
+      <div class="panel" style="margin-top:0">
+        <p class="cap" data-i="soilOurHead"></p>
+        <div class="seg" id="presetSeg">
+          <button data-v="294" data-i="presetDry"></button>
+          <button data-v="204" data-i="presetWet"></button>
+        </div>
+        <input type="range" id="raw2" min="202" max="460" value="294" step="1" aria-label="sensor">
+        <div id="soilOur" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="cap" data-i="soilChartHead"></p>
+      <div id="soilChart" style="margin-top:10px"></div>
+      <div class="legend mute">
+        <span style="--c:var(--acc)" data-i="legTop"></span>
+        <span style="--c:var(--wet)" data-i="legRoot"></span>
+      </div>
+    </div>
+
+    <h3 style="margin-top:56px" data-i="cmpHead"></h3>
+    <div class="scroll"><table class="cmp" id="cmpTable"></table></div>
+    <p class="note" data-i="cmpNote"></p>
+  </div>
+</section>
+
+<!-- SENSOR -->
+<section id="sensor" class="dark">
+  <div class="wrap">
+    <h2 data-i="senTitle"></h2>
+    <div class="two">
+      <div>
+        <p class="lead" data-i="senLead"></p>
+        <div class="nums sm" style="grid-template-columns:repeat(3,1fr);margin-top:28px">
+          <div class="num"><b>294</b><span class="cap" data-i="senDry"></span></div>
+          <div class="num"><b>204</b><span class="cap" data-i="senWet"></span></div>
+          <div class="num"><b>~22 °C</b><span class="cap" data-i="senTemp"></span></div>
+        </div>
+        <div class="levels" style="margin-top:30px">
+          <p class="cap" style="margin-bottom:6px" data-i="lvHead"></p>
+          <div class="lv"><span data-i="lvAir"></span><i style="width:1%;background:var(--rule-d)"></i><b>0%</b></div>
+          <div class="lv"><span data-i="lvDry"></span><i style="width:64%;background:var(--sand)"></i><b>64%</b></div>
+          <div class="lv"><span data-i="lvWet"></span><i style="width:99%;background:var(--acc)"></i><b>99%</b></div>
+          <div class="lv"><span data-i="lvWater"></span><i style="width:100%;background:var(--wet)"></i><b>100%</b></div>
+        </div>
+        <p class="note" data-i="senNote"></p>
+      </div>
+      <div class="panel" style="margin-top:0">
+        <p class="cap" style="margin-bottom:8px" data-i="senChartHead"></p>
+        <div id="sensorChart"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVISOR -->
+<section id="advisor" class="dark" style="border-top:1px solid var(--rule-d)">
+  <div class="wrap">
+    <h2 data-i="advTitle"></h2>
+    <p class="lead" style="margin-top:18px" data-i="advLead"></p>
+
+    <div class="controls">
+      <div class="ctl">
+        <p class="cap" data-i="ctlYear"></p>
+        <div class="seg" id="yearSeg">
+          <button data-v="dry" data-i="yDry"></button><button data-v="med" class="on" data-i="yMed"></button><button data-v="wet" data-i="yWet"></button>
+        </div>
+        <p class="lab mute" id="yearSrc" style="margin-top:10px"></p>
+      </div>
+      <div class="ctl">
+        <p class="cap" data-i="ctlMoist"></p>
+        <input type="range" id="raw" min="202" max="460" value="294" step="1" aria-label="sensor">
+        <p class="lab mute" style="margin-top:8px" id="rawText"></p>
+      </div>
+      <div class="ctl">
+        <p class="cap" data-i="ctlPrio"></p>
+        <div class="seg" id="prioSeg">
+          <button data-v="water" class="on" data-i="pWater"></button><button data-v="soil" data-i="pSoil"></button><button data-v="income" data-i="pIncome"></button>
+        </div>
+      </div>
+    </div>
+
+    <p class="lab mute" style="margin-top:40px" id="advCount"></p>
+    <div class="rotlist" id="rots" style="margin-top:8px"></div>
+
+    <div class="ctl" style="margin-top:48px">
+      <p class="cap" data-i="buildHead"></p>
+      <div class="build" id="build"></div>
+    </div>
+    <div class="rotlist" id="mine" style="margin-top:12px"></div>
+
+    <p class="note" data-i="advNote"></p>
+  </div>
+</section>
+
+<!-- CROPS -->
+<section id="crops">
+  <div class="wrap">
+    <h2 data-i="cropsTitle"></h2>
+    <p class="lead" style="margin-top:18px" data-i="cropsLead"></p>
+    <div class="scroll"><table class="crops" id="cropsTable"></table></div>
+    <p class="note" data-i="cropsNote"></p>
+  </div>
+</section>
+
+<!-- HOW -->
+<section id="how" class="dark">
+  <div class="wrap">
+    <h2 data-i="howTitle"></h2>
+    <div class="cards">
+      <div class="card"><span class="lab mute" data-i="how1k"></span><h3 data-i="how1h"></h3><p data-i="how1p"></p></div>
+      <div class="card"><span class="lab mute" data-i="how2k"></span><h3 data-i="how2h"></h3><p data-i="how2p"></p></div>
+      <div class="card"><span class="lab mute" data-i="how3k"></span><h3 data-i="how3h"></h3><p data-i="how3p"></p></div>
+    </div>
+    <p class="lead" style="margin-top:40px" data-i="howLead"></p>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section id="trust">
+  <div class="wrap">
+    <h2 data-i="trustTitle"></h2>
+    <div class="two">
+      <div class="list">
+        <p class="cap" style="margin-bottom:10px;color:#b4452f" data-i="trustHave"></p>
+        <div data-i="th1"></div><div data-i="th2"></div><div data-i="th3"></div><div data-i="th4"></div>
+      </div>
+      <div class="list">
+        <p class="cap" style="margin-bottom:10px;color:#b4452f" data-i="trustTodo"></p>
+        <div data-i="tt1"></div><div data-i="tt2"></div><div data-i="tt3"></div><div data-i="tt4"></div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:44px" data-i="trustLead"></p>
+  </div>
+</section>
+
+<footer class="dark">
+  <div class="wrap mute"><p data-i="footer"></p></div>
+</footer>
+
+<script>
+/* ================= тексты на двух языках ================= */
+const STR = {
+ru: {
+  navProblem: "Проблема", navNasa: "Данные NASA", navSoil: "Почва", navSensor: "Датчик", navAdvisor: "Совет", navCrops: "Культуры", navTrust: "Честно",
+  heroKicker: "✱ NASA Space Apps Challenge 2026 · Field Shift · Уральск",
+  heroTag: "Что сеять три года подряд, чтобы поле не пересохло.",
+  factTask: "Задача", factRegion: "Регион", factRegionV: "Западно-Казахстанская область", factData: "Данные", factDataV: "NASA POWER · NASA SMAP · датчик Arduino", factTeam: "Команда",
+  probTitle: "Один регион, два урожая.",
+  prob1: "мм осадков в год, Западный Казахстан", prob2v: "8,7 ц/га", prob2: "зерновые в 2018 году, засуха", prob3v: "21 ц/га", prob3: "в 2026 году, заявленный рекорд",
+  probLead: "<b>Разница больше чем в два раза.</b> А севооборот выбирают сразу на три года вперёд, поэтому ошибка в сухой год стоит урожая. Мы хотим, чтобы этот выбор опирался на данные.",
+  probSrc: "Источники: Минсельхоз РК, документ по ЗКО (март 2025); InBusiness, 17.08.2018; Жайық Пресс, 29.09.2026.",
+  nasaTitle: "45 лет данных NASA над Уральском.",
+  nasaLead: "Этот график строится прямо сейчас, в вашем браузере: сайт загружает месячные данные <b>NASA POWER</b> для точки 51,23° с. ш., 51,37° в. д. Переключайте осадки и влажность почвы. Нажмите на любой год, и совет ниже пересчитается для такого года.",
+  metricRain: "Осадки за год, мм", metricSoil: "Влажность корневого слоя, май–август, %",
+  legDry: "сухой год (нижняя треть)", legMed: "средний год", legWet: "влажный год (верхняя треть)",
+  loading: "Загружаю данные NASA POWER…",
+  loaded: (n, a, b) => `Загружено из NASA POWER: ${n} лет (${a}–${b}). Нажмите на столбик, чтобы выбрать год.`,
+  loadErr: e => `Не удалось загрузить данные NASA POWER (${e}). Проверьте интернет и обновите страницу. Советник работает и без них.`,
+  noSoilMetric: "Влажность почвы в ответе NASA не найдена.",
+  stMedian: "обычный год (медиана)", stDry: "сухой год", stWet: "влажный год", y2018: "2018 год", driest: "самый сухой",
+  unitMm: "мм", median: "медиана",
+  nasaSrc: "Источник: NASA Langley Research Center (LaRC) POWER Project: PRECTOTCORR (осадки с поправкой), GWETROOT (влажность корневого слоя, 0–100 см), GWETTOP (влажность поверхности, 0–5 см). Сетка около 0,5°, то есть десятки километров. Данные загружаются из <a href=\"https://power.larc.nasa.gov/\" target=\"_blank\" rel=\"noopener\">power.larc.nasa.gov</a>.",
+  soilTitle: "Анализ почвы: датчик и NASA.",
+  soilLead: "Слева влажность почвы вокруг Уральска по NASA POWER на последнюю доступную дату и сравнение с нормой этого месяца за 45 лет. Справа наш датчик: двигайте ползунок или выберите готовый замер.",
+  soilNasaHead: "NASA POWER: почва вокруг Уральска",
+  soilOurHead: "Наш датчик",
+  presetDry: "Сухая земля · 294", presetWet: "Влажная земля · 204",
+  soilChartHead: "Влажность почвы по NASA POWER, последние 120 дней",
+  legTop: "поверхность, 0–5 см", legRoot: "корневой слой, 0–100 см",
+  rootNow: "корневой слой", topNow: "поверхность",
+  normFor: (m, v) => `Норма для месяца «${m}» за 45 лет: ${v}%`,
+  vDry: "суше нормы", vNorm: "около нормы", vWet: "влажнее нормы",
+  asOf: d => `на ${d}`,
+  ourClass: { dry: "сухо", mid: "умеренно", wet: "влажно" },
+  ourText: (raw, idx) => `Показание <b>${raw}</b> · ${idx}% по нашей шкале (0% = воздух, 100% = вода).`,
+  ourRule: "Граница по нашим замерам: сухая земля ≈ 294, влажная ≈ 204. Выше 270 считаем «сухо», ниже 230 «влажно».",
+  cmpHead: "Сравнение: наш датчик и NASA",
+  cmpCols: ["", "Наш датчик", "NASA POWER"],
+  cmpRows: [
+    ["Что измеряет", "Влажность земли рядом с датчиком, одна точка", "Влажность слоя почвы, модель по спутникам и метеоданным"],
+    ["Площадь", "Несколько сантиметров", "Квадрат около 50 × 50 км"],
+    ["Глубина", "Верхние сантиметры, сколько вошёл датчик", "Поверхность 0–5 см и корневой слой 0–100 см"],
+    ["Шкала", "0% = воздух, 100% = вода (условно)", "0% = сухо, 100% = почва насыщена водой"],
+    ["Как часто", "Каждые 10 секунд", "Раз в день, с задержкой в несколько дней"],
+    ["Где замер", "Земля в помещении, 13–14 ноября 2026", "Поле вокруг Уральска"],
+  ],
+  cmpLast: "Последнее значение",
+  cmpOur: "Сухая земля 64%, влажная 99%",
+  cmpNasa: (t, r, d) => `Поверхность ${t}%, корни ${r}% (${d})`,
+  cmpNasaNo: "Нет данных: NASA POWER не загрузился",
+  cmpNote: "Честно: наши замеры сделаны в помещении, а не в поле, и шкалы у нас с NASA разные. Поэтому пока это проверка датчика, а не точное сравнение. Следующий шаг: воткнуть датчик в поле под Уральском и сравнить с NASA за тот же день. Датчик знает одно поле точно, спутник видит весь регион, вместе они проверяют друг друга.",
+  senTitle: "Датчик уже работает.",
+  senLead: "Arduino Uno, ёмкостный датчик влажности почвы v1.2 и щуп температуры DS18B20. Одно измерение каждые 10 секунд. Мы проверили датчик на воздухе, в воде и в настоящей земле: в сухой и во влажной.",
+  senDry: "сухая земля", senWet: "влажная земля", senTemp: "температура почвы",
+  lvHead: "Насколько влажно, по нашей шкале", lvAir: "Воздух · 460", lvDry: "Сухая земля · 294", lvWet: "Влажная земля · 204", lvWater: "Вода · 202",
+  senNote: "Чем меньше число, тем влажнее. Проценты пока условные: 0% — воздух, 100% — вода. Настоящую влажность почвы даст калибровка в поле.",
+  senChartHead: "Тест: воздух → вода → воздух, 13 ноября 2026",
+  water: "ВОДА", air: "ВОЗДУХ", min5: "5 мин",
+  advTitle: "Совет на три года.",
+  advLead: "SteppeTruth перебирает все севообороты из 11 культур и пара на три года вперёд, оценивает воду, почву и доход и показывает три лучших. Ниже можно проверить свой вариант.",
+  ctlYear: "1. Какие три года ожидаются", yDry: "Сухие", yMed: "Средние", yWet: "Влажные",
+  manual: "Выбрано вручную",
+  fromNasa: (y, v, t) => `По NASA POWER: ${y} год (${v}) — ${t}`,
+  yNames: { dry: "сухой", med: "средний", wet: "влажный" },
+  ctlMoist: "2. Влага при посеве (датчик)",
+  rawText: (raw, idx, cls) => `Датчик: <b>${raw}</b> · ${idx}% · <b>${cls}</b>. Сухая земля ≈ 294, влажная ≈ 204`,
+  ctlPrio: "3. Что важнее", pWater: "Вода", pSoil: "Почва", pIncome: "Доход",
+  advCount: n => `Проверено вариантов: ${n}. Лучшие три:`,
+  buildHead: "Проверить свой севооборот",
+  yearN: n => `Год ${n}`,
+  mine: "ваш вариант",
+  betterThan: p => `Лучше, чем ${p}% вариантов`,
+  lvl: ["низко", "низко", "средне", "высоко"],
+  scoreLine: (w, s, i) => `Вода: ${w} · почва: ${s} · доход: ${i}`,
+  fits: p => `Подходит на ${p}% (условно)`,
+  riskWord: "Риск",
+  noRisk: "заметных рисков по нашим правилам нет",
+  advNote: "Это демо-правила, баллы условные. Мы описали каждую культуру простыми свойствами (засухоустойчивость, как сильно иссушает почву, даёт ли азот, доход) и считаем по ним. Каждое правило должен проверить агроном ЗКО, прежде чем по нему сеять.",
+  w: {
+    afterFallow: c => `${c} после пара использует влагу, накопленную за год`,
+    legume: c => `${c} — бобовая культура, оставляет азот следующей`,
+    tolerant: c => `${c} хорошо переносит засуху`,
+    diverse: "Три разные группы культур — меньше болезней и сорняков",
+    allIncome: "Доход есть все три года",
+    fallowWater: "Чистый пар копит влагу для следующей культуры",
+    wetGood: "Во влажные годы воды хватает почти любой культуре",
+  },
+  r: {
+    fallow: "Год пара не приносит дохода, а голую почву выдувает ветер",
+    deep: (a, b) => `${a} глубоко иссушает почву, и ${b} получит меньше воды`,
+    cereal: "Зерновые подряд копят болезни и истощают почву",
+    same: c => `${c} два года подряд — болезни и вредители накапливаются`,
+    weak: c => `${c} плохо переносит засуху`,
+    dryStart: c => `Почва при посеве сухая — ${c} стартует трудно`,
+  },
+  cropsTitle: "Культуры, которые мы сравниваем.",
+  cropsLead: "11 культур и чистый пар, которые подходят для сухой степи Западного Казахстана. Каждая описана четырьмя простыми свойствами: на них опирается советник.",
+  cropCols: ["Культура", "Засухоустойчивость", "Иссушает почву", "Для почвы", "Доход", "Заметка"],
+  soilEff: { legume: "даёт азот", deep: "истощает", cereal: "зерновая", none: "нейтрально", fallow: "копит влагу" },
+  cropsNote: "Оценки качественные, по общим агрономическим свойствам культур, а не по нашим измерениям. Их нужно сверить с рекомендациями Минсельхоза РК и опытной станции для ЗКО.",
+  howTitle: "Как мы считаем.",
+  how1k: "01 · Земля", how1h: "Датчик Arduino", how1p: "Влажность и температура почвы на конкретном поле, раз в 10 секунд.",
+  how2k: "02 · Космос", how2h: "NASA POWER и SMAP", how2p: "POWER: осадки и влажность почвы с 1981 года. SMAP: влажность почвы до 1 м, сетка 9 км, с 2015 года.",
+  how3k: "03 · Расчёт", how3h: "Вода, почва, доход", how3p: "Влага при посеве, тип года и свойства культур. Перебираем все севообороты на три года и сортируем под приоритет фермера.",
+  howLead: "Датчик знает поле, спутник знает регион. Если датчик показывает сухо, а NASA влажно, мы снижаем уверенность совета и говорим об этом фермеру.",
+  trustTitle: "Почему этому можно верить.",
+  trustHave: "Что уже есть",
+  th1: "Настоящие данные NASA POWER за 45 лет: осадки и влажность почвы",
+  th2: "Работающий датчик: замеры в воде и в настоящей земле",
+  th3: "У каждого совета есть «почему» и риски",
+  th4: "Ответ для сухих, средних и влажных лет",
+  trustTodo: "Что ещё предстоит",
+  tt1: "Подключить NASA SMAP (нужен вход в Earthdata)",
+  tt2: "Откалибровать датчик в поле и сравнить с NASA в тот же день",
+  tt3: "Добавить цены и вредителей",
+  tt4: "Проверить правила с агрономом ЗКО",
+  trustLead: "<b>Решает всё равно фермер.</b> Мы даём цифры и объяснение. Сегодня это Западный Казахстан, завтра любой регион: меняется таблица культур, данные NASA те же.",
+  footer: "SteppeTruth · NASA Space Apps Challenge 2026 · Уральск. Данные: NASA POWER (NASA LaRC), NASA SMAP L4.",
+  months: ["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"],
+  pct: "%",
+},
+en: {
+  navProblem: "Problem", navNasa: "NASA data", navSoil: "Soil", navSensor: "Sensor", navAdvisor: "Advice", navCrops: "Crops", navTrust: "Honesty",
+  heroKicker: "✱ NASA Space Apps Challenge 2026 · Field Shift · Uralsk, Kazakhstan",
+  heroTag: "What to sow for three years so the field doesn’t run dry.",
+  factTask: "Challenge", factRegion: "Region", factRegionV: "West Kazakhstan Region", factData: "Data", factDataV: "NASA POWER · NASA SMAP · Arduino sensor", factTeam: "Team",
+  probTitle: "One region, two harvests.",
+  prob1: "mm of rain a year, Western Kazakhstan", prob2v: "8.7 c/ha", prob2: "grain in 2018, a drought year", prob3v: "21 c/ha", prob3: "in 2026, the reported record",
+  probLead: "<b>The harvest differs by more than two times.</b> A crop rotation is chosen three years ahead, so a mistake in a dry year costs the harvest. We want that choice to rest on data.",
+  probSrc: "Sources: Ministry of Agriculture of Kazakhstan, West Kazakhstan brief (March 2025); InBusiness, 17 Aug 2018; Zhaiyq Press, 29 Sep 2026.",
+  nasaTitle: "45 years of NASA data over Uralsk.",
+  nasaLead: "This chart is built right now, in your browser: the site loads monthly <b>NASA POWER</b> data for 51.23° N, 51.37° E. Switch between rainfall and soil moisture. Click any year and the advice below is recalculated for a year like that.",
+  metricRain: "Yearly rainfall, mm", metricSoil: "Root-zone soil moisture, May–August, %",
+  legDry: "dry year (lowest third)", legMed: "median year", legWet: "wet year (highest third)",
+  loading: "Loading NASA POWER data…",
+  loaded: (n, a, b) => `Loaded from NASA POWER: ${n} years (${a}–${b}). Click a bar to pick a year.`,
+  loadErr: e => `Could not load NASA POWER data (${e}). Check the connection and reload the page. The advisor works without it.`,
+  noSoilMetric: "Soil moisture was not found in the NASA reply.",
+  stMedian: "typical year (median)", stDry: "dry year", stWet: "wet year", y2018: "year 2018", driest: "driest",
+  unitMm: "mm", median: "median",
+  nasaSrc: "Source: NASA Langley Research Center (LaRC) POWER Project: PRECTOTCORR (bias-corrected rainfall), GWETROOT (root-zone soil wetness, 0–100 cm), GWETTOP (surface soil wetness, 0–5 cm). Grid about 0.5°, i.e. tens of kilometres. Data loaded from <a href=\"https://power.larc.nasa.gov/\" target=\"_blank\" rel=\"noopener\">power.larc.nasa.gov</a>.",
+  soilTitle: "Soil analysis: sensor and NASA.",
+  soilLead: "Left: soil moisture around Uralsk from NASA POWER on the latest available date, compared with the 45-year norm for that month. Right: our sensor. Move the slider or pick a real reading.",
+  soilNasaHead: "NASA POWER: soil around Uralsk",
+  soilOurHead: "Our sensor",
+  presetDry: "Dry soil · 294", presetWet: "Wet soil · 204",
+  soilChartHead: "Soil moisture from NASA POWER, last 120 days",
+  legTop: "surface, 0–5 cm", legRoot: "root zone, 0–100 cm",
+  rootNow: "root zone", topNow: "surface",
+  normFor: (m, v) => `45-year norm for ${m}: ${v}%`,
+  vDry: "drier than normal", vNorm: "near normal", vWet: "wetter than normal",
+  asOf: d => `on ${d}`,
+  ourClass: { dry: "dry", mid: "moderate", wet: "wet" },
+  ourText: (raw, idx) => `Reading <b>${raw}</b> · ${idx}% on our scale (0% = air, 100% = water).`,
+  ourRule: "Thresholds from our readings: dry soil ≈ 294, wet soil ≈ 204. Above 270 we call it “dry”, below 230 “wet”.",
+  cmpHead: "Comparison: our sensor and NASA",
+  cmpCols: ["", "Our sensor", "NASA POWER"],
+  cmpRows: [
+    ["What it measures", "Soil moisture next to the sensor, one point", "Moisture of a soil layer, a model built on satellite and weather data"],
+    ["Area", "A few centimetres", "A square of about 50 × 50 km"],
+    ["Depth", "The top centimetres the sensor reaches", "Surface 0–5 cm and root zone 0–100 cm"],
+    ["Scale", "0% = air, 100% = water (relative)", "0% = dry, 100% = soil saturated with water"],
+    ["How often", "Every 10 seconds", "Once a day, a few days behind"],
+    ["Where", "Soil indoors, 13–14 Nov 2026", "Fields around Uralsk"],
+  ],
+  cmpLast: "Latest value",
+  cmpOur: "Dry soil 64%, wet soil 99%",
+  cmpNasa: (t, r, d) => `Surface ${t}%, root zone ${r}% (${d})`,
+  cmpNasaNo: "No data: NASA POWER did not load",
+  cmpNote: "Honestly: our readings were taken indoors, not in a field, and our scale differs from NASA’s. So for now this checks the sensor rather than giving an exact comparison. Next step: put the sensor in a field near Uralsk and compare with NASA for the same day. The sensor knows one field precisely, the satellite sees the whole region, and together they check each other.",
+  senTitle: "Our sensor already works.",
+  senLead: "Arduino Uno, capacitive soil moisture sensor v1.2 and a DS18B20 temperature probe. One reading every 10 seconds. We tested it in air, in water and in real soil: dry and wet.",
+  senDry: "dry soil", senWet: "wet soil", senTemp: "soil temperature",
+  lvHead: "How wet, on our scale", lvAir: "Air · 460", lvDry: "Dry soil · 294", lvWet: "Wet soil · 204", lvWater: "Water · 202",
+  senNote: "The lower the number, the wetter. Percentages are relative for now: 0% is air, 100% is water. True soil moisture needs calibration in the field.",
+  senChartHead: "Test: air → water → air, 13 Nov 2026",
+  water: "WATER", air: "AIR", min5: "5 min",
+  advTitle: "Advice for three years.",
+  advLead: "SteppeTruth goes through every three-year rotation of 11 crops and fallow, scores water, soil and income, and shows the best three. You can also check your own rotation below.",
+  ctlYear: "1. What three years to expect", yDry: "Dry", yMed: "Median", yWet: "Wet",
+  manual: "Chosen by hand",
+  fromNasa: (y, v, t) => `From NASA POWER: ${y} (${v}) — ${t}`,
+  yNames: { dry: "dry", med: "median", wet: "wet" },
+  ctlMoist: "2. Soil moisture at sowing (sensor)",
+  rawText: (raw, idx, cls) => `Sensor: <b>${raw}</b> · ${idx}% · <b>${cls}</b>. Dry soil ≈ 294, wet ≈ 204`,
+  ctlPrio: "3. What matters most", pWater: "Water", pSoil: "Soil", pIncome: "Income",
+  advCount: n => `Rotations checked: ${n}. The best three:`,
+  buildHead: "Check your own rotation",
+  yearN: n => `Year ${n}`,
+  mine: "your rotation",
+  betterThan: p => `Better than ${p}% of rotations`,
+  lvl: ["low", "low", "medium", "high"],
+  scoreLine: (w, s, i) => `Water: ${w} · soil: ${s} · income: ${i}`,
+  fits: p => `Fit: ${p}% (relative)`,
+  riskWord: "Risk",
+  noRisk: "no notable risks under our rules",
+  advNote: "These are demo rules and the scores are relative. Each crop is described by simple properties (drought tolerance, how much it dries the soil, whether it fixes nitrogen, income) and we score from those. Every rule must be checked by a local agronomist before anyone sows by it.",
+  w: {
+    afterFallow: c => `${c} after fallow uses the moisture stored over a year`,
+    legume: c => `${c} is a legume and leaves nitrogen for the next crop`,
+    tolerant: c => `${c} copes well with drought`,
+    diverse: "Three different crop groups mean fewer diseases and weeds",
+    allIncome: "Income in all three years",
+    fallowWater: "Bare fallow stores moisture for the next crop",
+    wetGood: "In wet years almost any crop gets enough water",
+  },
+  r: {
+    fallow: "A fallow year earns nothing, and bare soil is blown away by wind",
+    deep: (a, b) => `${a} dries the soil deeply, so ${b} gets less water`,
+    cereal: "Cereals in a row build up disease and deplete the soil",
+    same: c => `${c} two years running builds up disease and pests`,
+    weak: c => `${c} copes poorly with drought`,
+    dryStart: c => `The soil is dry at sowing, so ${c} starts badly`,
+  },
+  cropsTitle: "The crops we compare.",
+  cropsLead: "11 crops plus bare fallow that suit the dry steppe of Western Kazakhstan. Each is described by four simple properties that the advisor uses.",
+  cropCols: ["Crop", "Drought tolerance", "Dries the soil", "For the soil", "Income", "Note"],
+  soilEff: { legume: "adds nitrogen", deep: "depletes", cereal: "cereal", none: "neutral", fallow: "stores water" },
+  cropsNote: "Ratings are qualitative, based on general agronomic properties of the crops, not on our measurements. They need to be checked against recommendations from Kazakhstan’s Ministry of Agriculture and the local research station.",
+  howTitle: "How it works.",
+  how1k: "01 · Ground", how1h: "Arduino sensor", how1p: "Soil moisture and temperature in a specific field, every 10 seconds.",
+  how2k: "02 · Space", how2h: "NASA POWER and SMAP", how2p: "POWER: rainfall and soil moisture since 1981. SMAP: soil moisture down to 1 m, 9 km grid, since 2015.",
+  how3k: "03 · Calculation", how3h: "Water, soil, income", how3p: "Moisture at sowing, the type of year and crop properties. We check every three-year rotation and rank them by the farmer’s priority.",
+  howLead: "The sensor knows the field, the satellite knows the region. If the sensor says dry and NASA says wet, we lower the confidence of the advice and tell the farmer.",
+  trustTitle: "Why it can be trusted.",
+  trustHave: "What we already have",
+  th1: "Real NASA POWER data for 45 years: rainfall and soil moisture",
+  th2: "A working sensor: readings in water and in real soil",
+  th3: "Every piece of advice has a “why” and its risks",
+  th4: "An answer for dry, median and wet years",
+  trustTodo: "Still to do",
+  tt1: "Connect NASA SMAP (needs an Earthdata login)",
+  tt2: "Calibrate the sensor in a field and compare with NASA on the same day",
+  tt3: "Add prices and pests",
+  tt4: "Check the rules with a local agronomist",
+  trustLead: "<b>The farmer still decides.</b> We bring the numbers and the reasoning. Today it is Western Kazakhstan, tomorrow any region: the crop table changes, the NASA data stays the same.",
+  footer: "SteppeTruth · NASA Space Apps Challenge 2026 · Uralsk. Data: NASA POWER (NASA LaRC), NASA SMAP L4.",
+  months: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+  pct: "%",
+},
+};
+
+/* ================= культуры: простые свойства (1–3) ================= */
+// drought — засухоустойчивость, dries — насколько иссушает почву для следующей культуры (−1…2)
+const CROPS = {
+  fallow:    { ru: "Пар", en: "Fallow", fallow: true, drought: 3, dries: -1, income: 0, group: "fallow",
+               note: { ru: "Год без посева, почва копит влагу", en: "A year without a crop, the soil stores moisture" } },
+  wwheat:    { ru: "Озимая пшеница", en: "Winter wheat", drought: 2, dries: 1, cereal: true, income: 3, group: "cereal",
+               note: { ru: "Лучше всего идёт по пару", en: "Does best after fallow" } },
+  swheat:    { ru: "Яровая пшеница", en: "Spring wheat", drought: 2, dries: 1, cereal: true, income: 2, group: "cereal",
+               note: { ru: "Самая привычная культура региона", en: "The most common crop in the region" } },
+  barley:    { ru: "Ячмень", en: "Barley", drought: 2, dries: 1, cereal: true, income: 2, group: "cereal",
+               note: { ru: "Созревает рано, уходит от летней жары", en: "Ripens early, escaping summer heat" } },
+  millet:    { ru: "Просо", en: "Millet", drought: 3, dries: 1, income: 1, group: "millet",
+               note: { ru: "Короткий сезон, терпит жару", en: "Short season, tolerates heat" } },
+  chickpea:  { ru: "Нут", en: "Chickpea", drought: 3, dries: 0, legume: true, income: 3, group: "legume",
+               note: { ru: "Бобовая, засухоустойчивая, хороший сбыт", en: "Drought-tolerant legume with good demand" } },
+  pea:       { ru: "Горох", en: "Pea", drought: 1, dries: 0, legume: true, income: 2, group: "legume",
+               note: { ru: "Бобовая, но любит влагу", en: "A legume, but needs moisture" } },
+  sunflower: { ru: "Подсолнечник", en: "Sunflower", drought: 2, dries: 2, deep: true, income: 3, group: "oil",
+               note: { ru: "Доходный, но глубоко иссушает почву", en: "Profitable, but dries the soil deeply" } },
+  safflower: { ru: "Сафлор", en: "Safflower", drought: 3, dries: 2, deep: true, income: 2, group: "oil",
+               note: { ru: "Масличная, очень засухоустойчивая", en: "Very drought-tolerant oilseed" } },
+  flax:      { ru: "Лён масличный", en: "Oilseed flax", drought: 2, dries: 1, income: 2, group: "flax",
+               note: { ru: "Хорошо разрывает цепочку зерновых", en: "A good break between cereals" } },
+  sudan:     { ru: "Суданская трава", en: "Sudan grass", drought: 3, dries: 1, income: 1, group: "forage",
+               note: { ru: "Корм для скота", en: "Forage for livestock" } },
+};
+const KEYS = Object.keys(CROPS);
+
+/* ================= общее состояние ================= */
+let lang = "ru";
+const state = { year: "med", raw: 294, prio: "water", mine: ["swheat", "swheat", "barley"], yearSrc: null, metric: "rain" };
+const L = () => STR[lang];
+const cn = k => CROPS[k][lang];
+const LAT = 51.23, LON = 51.37, Y0 = 1981, Y1 = 2025;
+const SVGNS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function el(tag, attrs, parent, text) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function quantile(sorted, q) {
+  const pos = (sorted.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+}
+const idxOf = raw => Math.round(Math.min(100, Math.max(0, (460 - raw) / (460 - 202) * 100)));
+const soilClass = raw => (raw > 270 ? "dry" : raw < 230 ? "wet" : "mid");
+const fmtDate = d => d.toLocaleDateString(lang === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+/* ================= NASA POWER: месячные данные ================= */
+let years = [];          // {y, rain, soil}
+let monthRoot = {};      // "MM" -> [values 0..100] по всем годам
+let nasaOk = null;
+
+async function loadMonthly() {
+  const url = `https://power.larc.nasa.gov/api/temporal/monthly/point?parameters=PRECTOTCORR_SUM,PRECTOTCORR,GWETROOT,GWETTOP&community=AG&longitude=${LON}&latitude=${LAT}&start=${Y0}&end=${Y1}&format=JSON`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const p = (await res.json()).properties.parameter;
+    const sum = p.PRECTOTCORR_SUM || {}, rate = p.PRECTOTCORR || {}, root = p.GWETROOT || {};
+    for (let y = Y0; y <= Y1; y++) {
+      let rain = 0, ok = true, soil = [], k;
+      for (let m = 1; m <= 12; m++) {
+        k = `${y}${String(m).padStart(2, "0")}`;
+        let v = sum[k];
+        if (v === undefined || v < 0) {                    // если суммы нет: мм в день × дней в месяце
+          const r = rate[k];
+          v = (r === undefined || r < 0) ? undefined : r * new Date(y, m, 0).getDate();
+        }
+        if (v === undefined) ok = false; else rain += v;
+        const g = root[k];
+        if (g !== undefined && g >= 0) {
+          (monthRoot[String(m).padStart(2, "0")] ||= []).push(g * 100);
+          if (m >= 5 && m <= 8) soil.push(g * 100);         // май–август: главный сезон
+        }
+      }
+      if (ok) years.push({ y, rain: Math.round(rain), soil: soil.length === 4 ? Math.round(soil.reduce((a, b) => a + b) / 4) : null });
+    }
+    if (years.length < 10) throw new Error(lang === "ru" ? "мало данных" : "too little data");
+    nasaOk = true;
+  } catch (e) {
+    nasaOk = e.message;
+  }
+  drawNasa(); renderSoilNow(); renderCompare();
+}
+
+function seriesFor(metric) {
+  const rows = years.filter(d => d[metric] !== null && d[metric] !== undefined);
+  if (!rows.length) return null;
+  const s = rows.map(d => d[metric]).sort((a, b) => a - b);
+  const t = { lo: quantile(s, 1 / 3), hi: quantile(s, 2 / 3), med: quantile(s, .5) };
+  rows.forEach(d => d.type = d[metric] < t.lo ? "dry" : d[metric] > t.hi ? "wet" : "med");
+  return { rows, t };
+}
+
+function drawNasa() {
+  const status = document.getElementById("nasaStatus"), box = document.getElementById("nasaChart"), stats = document.getElementById("nasaStats");
+  box.innerHTML = ""; stats.innerHTML = "";
+  status.classList.remove("err");
+  if (nasaOk === null) { status.textContent = L().loading; return; }
+  if (nasaOk !== true) { status.classList.add("err"); status.textContent = L().loadErr(nasaOk); return; }
+  const m = state.metric, S = seriesFor(m);
+  if (!S) { status.textContent = L().noSoilMetric; return; }
+  const { rows, t } = S, unit = m === "rain" ? L().unitMm : "%";
+  status.textContent = L().loaded(rows.length, rows[0].y, rows[rows.length - 1].y);
+  const W = 1000, H = 340, Lf = 54, R = 10, T = 16, B = 34;
+  const max = m === "rain" ? Math.ceil(Math.max(...rows.map(d => d.rain)) / 100) * 100 : 100;
+  const step = m === "rain" ? 100 : 20;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": L().nasaTitle }, box);
+  const y = v => T + (H - T - B) * (1 - v / max);
+  const bw = (W - Lf - R) / rows.length;
+  for (let v = 0; v <= max; v += step) {
+    el("line", { x1: Lf, x2: W - R, y1: y(v), y2: y(v), stroke: css("--rule-d"), "stroke-width": 1 }, svg);
+    el("text", { x: Lf - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 12, fill: css("--mute-d") }, svg, v);
+  }
+  el("text", { x: 4, y: T + 4, "font-size": 12, fill: css("--mute-d") }, svg, unit);
+  const colors = { dry: css("--dry"), med: css("--mid"), wet: css("--wet") };
+  rows.forEach((d, i) => {
+    const x = Lf + i * bw + 1.5, v = d[m];
+    const r = el("rect", { class: "bar", x, y: y(v), width: Math.max(bw - 3, 1), height: y(0) - y(v), fill: colors[d.type] }, svg);
+    el("title", {}, r, `${d.y}: ${v} ${unit}`);
+    r.addEventListener("click", () => pickYear(d, v));
+    if (d.y % 5 === 0) el("text", { x: x + bw / 2, y: H - 12, "text-anchor": "middle", "font-size": 12, fill: css("--mute-d") }, svg, d.y);
+    if (d.y === 2018) el("text", { x: x + bw / 2, y: y(v) - 8, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: css("--paper") }, svg, "2018");
+  });
+  el("line", { x1: Lf, x2: W - R, y1: y(t.med), y2: y(t.med), stroke: css("--paper"), "stroke-width": 1.5, "stroke-dasharray": "6 6" }, svg);
+  el("text", { x: W - R, y: y(t.med) - 6, "text-anchor": "end", "font-size": 12, fill: css("--paper") }, svg, `${L().median} ${Math.round(t.med)} ${unit}`);
+  const d18 = rows.find(d => d.y === 2018), lowest = rows.reduce((a, b) => (b[m] < a[m] ? b : a));
+  const items = [
+    [`${Math.round(t.med)} ${unit}`, L().stMedian], [`< ${Math.round(t.lo)} ${unit}`, L().stDry],
+    [`> ${Math.round(t.hi)} ${unit}`, L().stWet],
+    d18 ? [`${d18[m]} ${unit}`, L().y2018] : [`${lowest[m]} ${unit}`, `${lowest.y}, ${L().driest}`],
+  ];
+  stats.innerHTML = items.map(([b, x]) => `<div><b>${b}</b><span class="lab mute">${x}</span></div>`).join("");
+}
+
+function pickYear(d, v) {
+  state.yearSrc = { y: d.y, v, metric: state.metric, type: d.type };
+  setYear(d.type, true);
+  document.getElementById("advisor").scrollIntoView();
+}
+
+/* ================= NASA POWER: ежедневная влажность почвы ================= */
+let daily = null, dailyErr = null;
+const ymd = d => `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+
+async function loadDaily() {
+  const today = new Date();
+  for (const lag of [2, 10, 30]) {                        // NASA выкладывает данные с задержкой
+    const end = new Date(today); end.setDate(end.getDate() - lag);
+    const start = new Date(end); start.setDate(start.getDate() - 120);
+    const url = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=GWETTOP,GWETROOT&community=AG&longitude=${LON}&latitude=${LAT}&start=${ymd(start)}&end=${ymd(end)}&format=JSON`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const p = (await res.json()).properties.parameter;
+      const rows = Object.keys(p.GWETROOT || {}).sort().map(k => ({
+        date: new Date(+k.slice(0, 4), +k.slice(4, 6) - 1, +k.slice(6, 8)),
+        top: p.GWETTOP?.[k], root: p.GWETROOT[k],
+      })).filter(r => r.root >= 0 && r.top >= 0).map(r => ({ ...r, top: Math.round(r.top * 100), root: Math.round(r.root * 100) }));
+      if (rows.length) { daily = rows; dailyErr = null; break; }
+      throw new Error(lang === "ru" ? "нет данных" : "no data");
+    } catch (e) { dailyErr = e.message; }
+  }
+  renderSoilNow(); drawSoilChart(); renderCompare();
+}
+
+function renderSoilNow() {
+  const st = document.getElementById("soilStatus"), box = document.getElementById("soilNow");
+  st.classList.remove("err");
+  if (!daily) {
+    box.innerHTML = "";
+    if (dailyErr) { st.classList.add("err"); st.textContent = L().loadErr(dailyErr); } else st.textContent = L().loading;
+    return;
+  }
+  st.textContent = "";
+  const last = daily[daily.length - 1], mm = String(last.date.getMonth() + 1).padStart(2, "0");
+  const arr = monthRoot[mm];
+  let normHtml = "", verdict = "";
+  if (arr && arr.length) {
+    const norm = Math.round(arr.reduce((a, b) => a + b) / arr.length), diff = last.root - norm;
+    const cls = diff < -5 ? "dry" : diff > 5 ? "wet" : "";
+    verdict = `<span class="verdict ${cls}">${diff < -5 ? L().vDry : diff > 5 ? L().vWet : L().vNorm} · ${diff > 0 ? "+" : ""}${diff}</span>`;
+    normHtml = `<p class="lab mute" style="margin-top:10px">${L().normFor(L().months[last.date.getMonth()], norm)}</p>`;
+  }
+  box.innerHTML = `
+    <p class="lab mute" style="margin-top:6px">${L().asOf(fmtDate(last.date))}</p>
+    <div style="display:flex;gap:36px;margin-top:10px;flex-wrap:wrap">
+      <div><p class="big">${last.root}%</p><p class="lab mute">${L().rootNow}</p></div>
+      <div><p class="big">${last.top}%</p><p class="lab mute">${L().topNow}</p></div>
+    </div>${verdict}${normHtml}`;
+}
+
+function drawSoilChart() {
+  const box = document.getElementById("soilChart");
+  box.innerHTML = "";
+  if (!daily) return;
+  const W = 1000, H = 260, Lf = 44, R = 10, T = 12, B = 30;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": L().soilChartHead }, box);
+  const x = i => Lf + i * (W - Lf - R) / Math.max(1, daily.length - 1);
+  const y = v => T + (H - T - B) * (1 - v / 100);
+  for (let v = 0; v <= 100; v += 25) {
+    el("line", { x1: Lf, x2: W - R, y1: y(v), y2: y(v), stroke: css("--rule-l"), "stroke-width": 1 }, svg);
+    el("text", { x: Lf - 8, y: y(v) + 4, "text-anchor": "end", "font-size": 12, fill: css("--mute-l") }, svg, v + "%");
+  }
+  [["top", css("--acc")], ["root", css("--wet")]].forEach(([k, c]) =>
+    el("polyline", { points: daily.map((d, i) => `${x(i)},${y(d[k])}`).join(" "), fill: "none", stroke: c, "stroke-width": 3, "stroke-linejoin": "round" }, svg));
+  daily.forEach((d, i) => {
+    if (d.date.getDate() === 1) {
+      el("line", { x1: x(i), x2: x(i), y1: T, y2: H - B, stroke: css("--rule-l"), "stroke-dasharray": "3 5" }, svg);
+      el("text", { x: x(i) + 4, y: H - 10, "font-size": 12, fill: css("--mute-l") }, svg, L().months[d.date.getMonth()]);
+    }
+  });
+}
+
+/* ================= наш датчик и сравнение ================= */
+function renderOur() {
+  const raw = state.raw, idx = idxOf(raw), c = soilClass(raw);
+  document.getElementById("soilOur").innerHTML = `
+    <p class="big">${idx}%</p>
+    <span class="verdict ${c === "dry" ? "dry" : c === "wet" ? "wet" : ""}">${L().ourClass[c]}</span>
+    <p style="margin-top:12px">${L().ourText(raw, idx)}</p>
+    <p class="lab mute" style="margin-top:8px">${L().ourRule}</p>`;
+  document.getElementById("rawText").innerHTML = L().rawText(raw, idx, L().ourClass[c]);
+  document.getElementById("raw").value = raw;
+  document.getElementById("raw2").value = raw;
+  document.querySelectorAll("#presetSeg button").forEach(b => b.classList.toggle("on", +b.dataset.v === raw));
+}
+
+function renderCompare() {
+  const t = L(), last = daily && daily[daily.length - 1];
+  const nasaVal = last ? t.cmpNasa(last.top, last.root, fmtDate(last.date)) : (dailyErr ? t.cmpNasaNo : t.loading);
+  const rows = [...t.cmpRows, [t.cmpLast, t.cmpOur, nasaVal]];
+  document.getElementById("cmpTable").innerHTML =
+    `<tr>${t.cmpCols.map(h => `<th>${h}</th>`).join("")}</tr>` +
+    rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("");
+}
+
+/* ================= график датчика: воздух → вода → воздух ================= */
+const RAW = [462,462,461,461,460,460,460,460,460,459,460,378,202,202,202,202,202,202,202,202,
+             403,434,334,459,461,461,460,460,460,460,460,460];
+function drawSensor() {
+  const box = document.getElementById("sensorChart");
+  box.innerHTML = "";
+  const W = 560, H = 300, Lf = 40, R = 12, T = 30, B = 34;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": L().senChartHead }, box);
+  const x = i => Lf + i * (W - Lf - R) / (RAW.length - 1);
+  const y = v => T + (v - 180) * (H - T - B) / (480 - 180);   // чем влажнее (меньше число), тем выше точка
+  el("rect", { x: x(11.5), y: T - 10, width: x(20.5) - x(11.5), height: H - T - B + 10, fill: css("--acc"), "fill-opacity": .18 }, svg);
+  [202, 460].forEach(v => {
+    el("line", { x1: Lf, x2: W - R, y1: y(v), y2: y(v), stroke: css("--rule-d"), "stroke-dasharray": "3 6" }, svg);
+    el("text", { x: Lf - 6, y: y(v) + 4, "text-anchor": "end", "font-size": 12, fill: css("--mute-d") }, svg, v);
+  });
+  el("polyline", { points: RAW.map((v, i) => `${x(i)},${y(v)}`).join(" "), fill: "none", stroke: css("--acc"), "stroke-width": 3, "stroke-linejoin": "round" }, svg);
+  RAW.forEach((v, i) => el("circle", { cx: x(i), cy: y(v), r: 3.5, fill: css("--acc") }, svg));
+  el("text", { x: (x(11.5) + x(20.5)) / 2, y: y(202) - 12, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: css("--acc") }, svg, L().water);
+  el("text", { x: x(1), y: y(460) - 10, "font-size": 13, "font-weight": 700, fill: css("--paper") }, svg, L().air);
+  el("text", { x: Lf, y: H - 10, "font-size": 12, fill: css("--mute-d") }, svg, "0");
+  el("text", { x: W - R, y: H - 10, "text-anchor": "end", "font-size": 12, fill: css("--mute-d") }, svg, L().min5);
+}
+
+/* ================= советник: перебор севооборотов ================= */
+const WEIGHTS = { water: { w: 3, s: 1, i: 1 }, soil: { w: 1, s: 3, i: 1 }, income: { w: 1, s: 1, i: 3 } };
+
+function score(seq) {
+  const yt = state.year, sc = soilClass(state.raw), why = [], risk = [];
+  const water = [], inc = [];
+  let soil = 0, legumeDone = false;
+  seq.forEach((k, i) => {
+    const c = CROPS[k], pk = i > 0 ? seq[i - 1] : null, p = pk ? CROPS[pk] : null;
+    let w;
+    if (c.fallow) { w = 3; why.push(["fallowWater"]); risk.push(["fallow"]); soil -= 0.5; inc.push(0); water.push(w); return; }
+    // в сухой год неустойчивым культурам воды не хватает; запас воды после пара важнее всего в сухой год
+    w = yt === "dry" ? (c.drought === 3 ? 3 : c.drought - 1) : yt === "med" ? Math.min(3, c.drought + 1) : 3;
+    if (p && p.fallow) { w += yt === "dry" ? 2 : yt === "med" ? 1 : 0; why.push(["afterFallow", k]); }
+    if (p && p.dries === 2 && yt !== "wet") { w -= 1; risk.push(["deep", pk, k]); }
+    if (i === 0 && sc === "dry" && c.drought < 3) { w -= 1; risk.push(["dryStart", k]); }
+    if (i === 0 && sc === "wet") w += 1;
+    w = Math.max(0, Math.min(3, w));
+    water.push(w);
+    inc.push(c.income * (w >= 2 ? 1 : w >= 1 ? 0.6 : 0.3));
+    if (c.legume) { if (!legumeDone) soil += 1; legumeDone = true; why.push(["legume", k]); }   // азот засчитываем один раз
+    if (p && p.cereal && c.cereal) { soil -= 1; risk.push(["cereal"]); }
+    if (pk === k) { soil -= 1; risk.push(["same", k]); }
+    if (c.deep) soil -= 0.5;
+    if (yt === "dry" && c.drought === 3) why.push(["tolerant", k]);
+    if (yt === "dry" && c.drought === 1) risk.push(["weak", k]);
+  });
+  const groups = new Set(seq.map(k => CROPS[k].group));
+  if (groups.size === 3 && !seq.includes("fallow")) { soil += 1; why.push(["diverse"]); }
+  if (!seq.includes("fallow")) why.push(["allIncome"]);
+  if (yt === "wet") why.push(["wetGood"]);
+  const wt = WEIGHTS[state.prio];
+  const waterN = water.reduce((a, b) => a + b) / 9, soilN = Math.max(0, Math.min(1, (soil + 3) / 5)), incN = inc.reduce((a, b) => a + b) / 9;
+  const total = (wt.w * waterN + wt.s * soilN + wt.i * incN) / (wt.w + wt.s + wt.i);
+  const uniq = a => a.filter((x, i) => a.findIndex(y => y.join() === x.join()) === i);
+  return { seq, total, pct: Math.round(total * 100), why: uniq(why), risk: uniq(risk),
+           lw: Math.round(waterN * 3), ls: Math.round(soilN * 3), li: Math.round(incN * 3) };
+}
+
+function allRotations() {
+  const out = [];
+  for (const a of KEYS) for (const b of KEYS) for (const c of KEYS) {
+    const s = [a, b, c];
+    if (s.filter(k => k === "fallow").length > 1 || c === "fallow") continue;   // не больше одного пара, не в конце
+    if (a === b || b === c || a === c) continue;                                 // в советах каждая культура один раз за три года
+    out.push(s);
+  }
+  return out;
+}
+const ALL = allRotations();
+
+function textOf(item, isRisk) {
+  const [key, ...args] = item, f = (isRisk ? L().r : L().w)[key];
+  return typeof f === "function" ? f(...args.map(cn)) : f;
+}
+
+function rotHtml(r, rank, mine, better) {
+  const t = L();
+  const chain = r.seq.map(cn).join(" → ");
+  const risks = r.risk.length ? r.risk.map(x => textOf(x, true)).join("; ") : t.noRisk;
+  return `<div class="rot${mine ? " mine" : ""}">
+    <div class="rank">${mine ? "✱" : rank}</div>
+    <div>
+      <p class="chain">${chain}${mine ? `<span class="pill">${t.mine}</span>` : ""}</p>
+      <ul class="why">${r.why.slice(0, 4).map(x => `<li>${textOf(x)}</li>`).join("")}</ul>
+      <p class="lab mute" style="margin-top:8px">${t.riskWord}: ${risks}</p>
+    </div>
+    <div class="score">
+      <p class="lab mute">${t.scoreLine(t.lvl[r.lw], t.lvl[r.ls], t.lvl[r.li])}</p>
+      <div class="meter"><i style="width:${r.pct}%"></i></div>
+      <p class="lab mute" style="margin-top:6px">${t.fits(r.pct)}${better !== undefined ? "<br>" + t.betterThan(better) : ""}</p>
+    </div>
+  </div>`;
+}
+
+function renderAdvisor() {
+  const scored = ALL.map(score).sort((a, b) => b.total - a.total);
+  const top = [];
+  for (const r of scored) {                                  // три лучших, но не похожих друг на друга
+    if (top.every(q => q.seq.filter((k, i) => k !== r.seq[i]).length >= 2)) top.push(r);
+    if (top.length === 3) break;
+  }
+  document.getElementById("advCount").textContent = L().advCount(ALL.length);
+  document.getElementById("rots").innerHTML = top.map((r, i) => rotHtml(r, i + 1)).join("");
+  const mine = score(state.mine);
+  const better = Math.round(scored.filter(r => r.total < mine.total).length / scored.length * 100);
+  document.getElementById("mine").innerHTML = rotHtml(mine, 0, true, better);
+  const ys = document.getElementById("yearSrc");
+  const src = state.yearSrc;
+  ys.textContent = src ? L().fromNasa(src.y, `${src.v} ${src.metric === "rain" ? L().unitMm : "%"}`, L().yNames[src.type]) : L().manual;
+}
+
+function renderBuild() {
+  document.getElementById("build").innerHTML = [0, 1, 2].map(i => `
+    <label><span class="lab mute">${L().yearN(i + 1)}</span>
+      <select data-pos="${i}">${KEYS.map(k => `<option value="${k}"${state.mine[i] === k ? " selected" : ""}>${cn(k)}</option>`).join("")}</select>
+    </label>`).join("");
+  document.querySelectorAll("#build select").forEach(s => s.addEventListener("change", e => {
+    state.mine[+e.target.dataset.pos] = e.target.value; renderAdvisor();
+  }));
+}
+
+function setYear(v, fromNasa) {
+  state.year = v;
+  if (!fromNasa) state.yearSrc = null;
+  document.querySelectorAll("#yearSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  renderAdvisor();
+}
+
+/* ================= таблица культур ================= */
+function renderCrops() {
+  const t = L(), dots = n => `<span class="dots">${"●".repeat(n)}<s>${"●".repeat(3 - n)}</s></span>`;
+  const eff = c => c.fallow ? t.soilEff.fallow : c.legume ? t.soilEff.legume : c.deep ? t.soilEff.deep : c.cereal ? t.soilEff.cereal : t.soilEff.none;
+  document.getElementById("cropsTable").innerHTML =
+    `<tr>${t.cropCols.map(h => `<th>${h}</th>`).join("")}</tr>` +
+    KEYS.map(k => {
+      const c = CROPS[k];
+      return `<tr><td><b>${c[lang]}</b></td><td>${c.fallow ? "—" : dots(c.drought)}</td><td>${c.fallow ? "—" : dots(Math.max(0, c.dries + 1))}</td><td>${eff(c)}</td><td>${dots(c.income)}</td><td class="mute">${c.note[lang]}</td></tr>`;
+    }).join("");
+}
+
+/* ================= язык ================= */
+function applyLang(l) {
+  lang = l;
+  document.documentElement.lang = l;
+  try { localStorage.setItem("st-lang", l); } catch (e) {}
+  document.querySelectorAll("[data-i]").forEach(e => { const v = STR[l][e.dataset.i]; if (typeof v === "string") e.innerHTML = v; });
+  document.querySelectorAll(".langs button").forEach(b => b.classList.toggle("on", b.dataset.lang === l));
+  document.title = l === "ru" ? "SteppeTruth · NASA Space Apps 2026" : "SteppeTruth · NASA Space Apps 2026 (EN)";
+  drawNasa(); renderSoilNow(); drawSoilChart(); renderOur(); renderCompare(); drawSensor(); renderBuild(); renderAdvisor(); renderCrops();
+}
+
+/* ================= кнопки ================= */
+document.querySelectorAll(".langs button").forEach(b => b.addEventListener("click", () => applyLang(b.dataset.lang)));
+document.querySelectorAll("#yearSeg button").forEach(b => b.addEventListener("click", () => setYear(b.dataset.v)));
+document.querySelectorAll("#prioSeg button").forEach(b => b.addEventListener("click", () => {
+  state.prio = b.dataset.v;
+  document.querySelectorAll("#prioSeg button").forEach(x => x.classList.toggle("on", x === b));
+  renderAdvisor();
+}));
+document.querySelectorAll("#metricSeg button").forEach(b => b.addEventListener("click", () => {
+  state.metric = b.dataset.v;
+  document.querySelectorAll("#metricSeg button").forEach(x => x.classList.toggle("on", x === b));
+  drawNasa();
+}));
+document.querySelectorAll("#presetSeg button").forEach(b => b.addEventListener("click", () => { state.raw = +b.dataset.v; renderOur(); renderAdvisor(); }));
+["raw", "raw2"].forEach(id => document.getElementById(id).addEventListener("input", e => { state.raw = +e.target.value; renderOur(); renderAdvisor(); }));
+
+/* ================= старт ================= */
+let startLang = "ru";
+try { startLang = new URLSearchParams(location.search).get("lang") || localStorage.getItem("st-lang") || "ru"; } catch (e) {}
+applyLang(startLang === "en" ? "en" : "ru");
+loadMonthly();
+loadDaily();
+</script>
+</body>
+</html>
